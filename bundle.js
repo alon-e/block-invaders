@@ -824,6 +824,8 @@ Game.prototype.addStars = function() {
 };
 
 Game.prototype.addUfo = function(ctx) {
+  //TODO: have UFO success only once! (block reward)
+
   // Early return if a ufo is currently spawned
   if (this.ufo) return;
 
@@ -849,6 +851,7 @@ Game.prototype.addUfo = function(ctx) {
       canvasSize: this.canvasSize,
       img: ufoImage,
       radius: 27,
+      size: 53,
       pos: [spawnPositions[spawnIdx], 45],
       vel: vel,
       side: 'invader'
@@ -859,34 +862,43 @@ Game.prototype.addUfo = function(ctx) {
 };
 
 Game.prototype.addInvaderShips = function(level = 1) {
-  let invaderShipName, invaderShipImage;
+  //TODO: locate invaders based on block
+  //TODO: diff radius based on size of drawing
+  let invaderShipName, invaderShipImage, invaderShipSize;
   let y = 100;
   let invaderIdx = 0;
   let vel = [0.27, 0];
-  vel[0] += 0.05 * level;
+  vel[0] += 0.05 * level; //TODO: level == difficulty
 
-  for (let row = 0; row < 5; row++) {
+  for (let row = 0; row < 4; row++) {
     if (row < 1) {
       invaderShipName = 'invader';
       invaderShipImage = document.getElementById('invader-1');
+      invaderShipSize = 55;
+
     } else if (row < 3) {
       invaderShipName = 'soldier';
       invaderShipImage = document.getElementById('soldier-1');
+      invaderShipSize = 45;
+
     } else if (row > 2) {
       invaderShipName = 'grunt';
       invaderShipImage = document.getElementById('grunt-1');
+      invaderShipSize = 25;
+
     }
 
-    for (let x = 1; x < 14; x++, invaderIdx++) {
+    for (let x = 1; x < this.canvasSize[0] / invaderShipSize / 2; x++, invaderIdx++) {
       let invaderShip = new Ship ({
         id: invaderIdx,
         name: invaderShipName,
         game: this,
         canvasSize: this.canvasSize,
         img: invaderShipImage,
-        radius: 12,
+        radius: (invaderShipSize-1) / 2,
+        size: invaderShipSize,
         pos: [
-          x * 35,
+          x * (invaderShipSize + 10),
           y
         ],
         vel: vel,
@@ -894,7 +906,7 @@ Game.prototype.addInvaderShips = function(level = 1) {
       });
       this.invaderShips.push(invaderShip);
     }
-    y += 40;
+    y += invaderShipSize + 15;
   }
 
 };
@@ -930,6 +942,7 @@ Game.prototype.addDefenderShip = function() {
     img: document.getElementById('defender'),
     deathImg: document.getElementById('defender-death'),
     radius: 16,
+    size: 33,
     pos: [
       (this.canvasSize[0] - 30) * .52,
       this.canvasSize[1] - 70
@@ -1035,6 +1048,8 @@ Game.prototype.collisionObjects = function() {
 
 // This method makes enemy ships shoot bullets
 Game.prototype.enemyFire = function() {
+  //TODO: change to get input from block (difficulty, ?)
+
   // fireChance increases as the horde gets wiped out
   let fireChance, invaderCount = this.invaderShips.length;
   if (invaderCount < 10) {
@@ -1151,6 +1166,7 @@ const Ship = function(options = { radius: 13 }) {
   this.game = options.game;
   this.canvasSize = options.canvasSize;
   this.img = options.img;
+  this.size = options.size;
   this.pos = options.pos;
   this.vel = options.vel;
   this.radius = options.radius;
@@ -1182,7 +1198,7 @@ Ship.prototype.draw = function(ctx) {
   if (this.name === 'ufo') {
     let x = this.pos[0] - 26;
     let y = this.pos[1] - 3;
-    ctx.drawImage(this.img, x, y, 53, 30);
+    ctx.drawImage(this.img, x, y, this.size, this.size);
     return;
   }
 
@@ -1193,10 +1209,9 @@ Ship.prototype.draw = function(ctx) {
   if (this.name === 'defender') {
     x -= 4;
     y -= 4;
-    ctx.drawImage(this.img, x, y, 33, 33);
-  } else {
-    ctx.drawImage(this.img, x, y, 25, 25);
   }
+  ctx.drawImage(this.img, x, y, this.size, this.size);
+
 };
 
 Ship.prototype.respawn = function() {
@@ -1305,6 +1320,12 @@ Ship.prototype.toggleImage = function() {
 };
 
 Ship.prototype.killScore = function() {
+  //TODO: build score as following:
+  // 1. full stage is the block reward
+  // 2. spaceship is the block subsidy?
+  // the 3 levels are based on the bins in the block?
+  // question: display max possible winnings?
+
   if (this.name === 'grunt') {
     return 10;
   } else if (this.name === 'soldier') {
