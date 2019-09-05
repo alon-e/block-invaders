@@ -421,8 +421,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   gameView.welcome();
 
-  const mainLogo           = document.getElementById('main-logo');
-  const mainLogo2           = document.getElementById('main-logo-2');
+  const mainLogo           = document.getElementById('meni-logo');
+  const mainLogo2           = document.getElementById('meni-logo-2');
+  const coinLogo           = document.getElementById('coin-logo');
 
   const playGameButton     = document.getElementById('play-game');
   const gameOverImage      = document.getElementById('game-over');
@@ -473,7 +474,8 @@ document.addEventListener('DOMContentLoaded', () => {
     menuButton.className        =     '';
     playGameButton.className    = 'hide';
     mainLogo.className          = 'hide';
-    mainLogo2.className          = 'hide';
+    mainLogo2.className         = 'hide';
+    coinLogo.className          = 'hide';
     gameOverImage.className     = 'hide';
     grunt.className             = 'hide';
     soldier.className           = 'hide';
