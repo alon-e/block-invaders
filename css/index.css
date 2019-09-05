@@ -240,10 +240,19 @@ body {
 #main-logo {
   position: absolute;
   top: 10px;
-  left: 215px;
+  left: 65px;
 
-  height: 210px;
-  width: 500px;
+  height: 400px;
+  width: 330px;
+}
+
+#main-logo-2 {
+  position: absolute;
+  top: 10px;
+  right: 65px;
+
+  height: 400px;
+  width: 330px;
 }
 
 #grunt-1 {
