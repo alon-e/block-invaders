@@ -870,7 +870,7 @@ Game.prototype.addInvaderShips = function(level = 1) {
   let vel = [0.27, 0];
   vel[0] += 0.05 * level; //TODO: level == difficulty
 
-  for (let row = 0; row < 4; row++) {
+  for (let row = 0; row < 5; row++) {
     if (row < 1) {
       invaderShipName = 'invader';
       invaderShipImage = document.getElementById('invader-1');
@@ -888,7 +888,7 @@ Game.prototype.addInvaderShips = function(level = 1) {
 
     }
 
-    for (let x = 1; x < this.canvasSize[0] / invaderShipSize / 2; x++, invaderIdx++) {
+    for (let x = 1; x < this.canvasSize[0] / invaderShipSize / 1.8; x++, invaderIdx++) {
       let invaderShip = new Ship ({
         id: invaderIdx,
         name: invaderShipName,
