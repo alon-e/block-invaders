@@ -620,7 +620,7 @@ GameView.prototype.start = function() {
 
   // Animate enemy sprites
   this.toggle = setInterval(() => {
-    if (!this.isPaused) this.game.toggleInvaderAnimation();
+    if (!this.isPaused) this.game.toggleInvaders();
   }, 500);
 };
 
