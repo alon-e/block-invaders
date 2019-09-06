@@ -54,7 +54,7 @@ body {
 
 #ufo {
     position: absolute;
-    left: 355px;
+    left: 358px;
     bottom: -235px;
 
     height: 50px;
@@ -198,6 +198,25 @@ body {
 
   text-align: center;
   border-radius: 10px;
+}
+
+#aboutOSD {
+    padding: 0 10px 0 10px;
+
+    position: absolute;
+    bottom: -250px;
+    left: 0px;
+
+    background-color: grey;
+    height: 230px;
+    width: 300px;
+
+    font-family: 'Bungee Inline', cursive;
+    letter-spacing: 1px;
+    line-height: 25px;
+    color: #000;
+
+    border-radius: 10px;
 }
 
 #port-link {
