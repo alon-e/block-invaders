@@ -697,12 +697,12 @@ GameView.prototype.addMenu = function(ctx) {
 GameView.prototype.addScoreText = function(ctx) {
   let x = this.game.DIM_X * .01, y = this.game.DIM_Y * .05;
   // ctx.find = "20px Georgia";
-  ctx.fillText(`SCORE: ${this.game.score.toFixed(6)}`, x, y);
+  ctx.fillText(`FEES COLLECTED: ${this.game.score.toFixed(6)}`, x, y);
 };
 
 GameView.prototype.addLevelText = function(ctx) {
   let x = this.game.DIM_X * .01, y = this.game.DIM_Y * .95;
-  ctx.fillText(`LEVEL: ${this.game.level}`, x, y);
+  ctx.fillText(`BLOCK HEIGHT: ${this.game.blockInfo.options.height}`, x, y);
 }
 
 GameView.prototype.bindKeyHandlers = function() {
@@ -877,7 +877,7 @@ Game.prototype.addInvaderShips = function(level = 1) {
   let y = 100;
   let invaderIdx = 0;
   let vel = [0.27, 0];
-  vel[0] += 0.05 * level; //TODO: level == difficulty
+  vel[0] += 0.05 * this.blockInfo.options.difficulty; //level == difficulty
 
   for (let row = 0; row < 4; row++) {
     if (row < 1) {
@@ -1034,6 +1034,8 @@ Game.prototype.winRound = function() {
         this.level++;
         this.defenderLives++;
         this.addInvaderShips(this.level);
+
+        this.ufoHit = false; //allow a new UFO
       }
     }, 1000);
   }
@@ -1084,7 +1086,7 @@ Game.prototype.enemyFire = function() {
   // Early return if ufo is not spawned
   if (this.ufo == null) { return; }
 
-  let ufoFire = Math.random() * 1000;
+  let ufoFire = Math.random() * 2000;
   if (ufoFire < 15) {
     this.ufo.fireBullet();
   }
@@ -1329,11 +1331,10 @@ Ship.prototype.toggleImage = function() {
 };
 
 Ship.prototype.killScore = function() {
-  //TODO: build score as following:
+  //build score as following:
   // 1. full stage is the block reward
-  // 2. spaceship is the block subsidy?
-  // the 3 levels are based on the bins in the block?
-  // question: display max possible winnings?
+  // 2. UFO is the block subsidy
+  // the 3 levels are based on the bins in the block
 
   if (this.name === 'grunt') {
     return this.game.blockInfo.options.avg_transaction_sizes[2];
