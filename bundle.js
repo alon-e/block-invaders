@@ -599,6 +599,9 @@ const GameView = function(ctx, canvasSize) {
 
   this.isMuted = false;
   this.isPre = true;
+
+  this.killScoreList = []
+
   this.addKeyListeners();
 };
 
@@ -628,6 +631,9 @@ GameView.prototype.start = function() {
       this.moveDefender();
       this.game.moveInvaders();
       this.game.addUfo();
+      this.addKillScoreText(this.ctx);
+
+
       this.game.step();
     }
   }, 10);
@@ -722,8 +728,21 @@ GameView.prototype.addScoreText = function(ctx) {
     ctx.font = "23px Bungee Inline";
     this.ctx.fillStyle = '#fff';
 
-};
+  this.game.ctx.fillStyle = "#2f2"
+  this.killScoreList.forEach(([score, x, y]) => {
+    this.game.ctx.fillText("+" + score.toFixed(6), x, y)
+  })
+  this.game.ctx.fillStyle = "#fff"
 
+};
+GameView.prototype.addKillScoreText = function(ctx) {
+  this.game.ctx.fillStyle = "#2f2"
+  this.killScoreList.forEach(([score, x, y]) => {
+    this.game.ctx.fillText("+" + score.toFixed(6), x, y)
+  })
+  this.game.ctx.fillStyle = "#fff"
+
+};
 GameView.prototype.addLevelText = function(ctx) {
   let x = this.game.DIM_X * .01, y = this.game.DIM_Y * .95;
   ctx.fillText(`BLOCK HEIGHT: ${this.game.blockInfo.options.height}`, x, y);
@@ -1333,13 +1352,16 @@ Ship.prototype.death = function() {
     if (!this.game.gameView.isMuted) deathSound = './sounds/defender_death.mp3';
     this.respawn();
   } else {
-    this.game.score += this.killScore();
+      score = this.killScore();
+    this.game.score += score;
     this.game.increaseInvadersSpeed();
     this.currentBullet = false;
     this.isDead = true;
-    this.deathImage();
 
-    if (this.name === 'ufo') {
+
+      this.deathImage();
+      this.game.gameView.killScoreList.push([score, this.pos[0], this.pos[1]]);
+      if (this.name === 'ufo') {
       this.dropPowerUp(this.pos);
       this.vel = [0,0];
     }
@@ -1347,6 +1369,7 @@ Ship.prototype.death = function() {
 
     setTimeout(() => {
       this.game.remove(this);
+      this.game.gameView.killScoreList.pop()
     }, 200);
 
     if (!this.game.gameView.isMuted) {
