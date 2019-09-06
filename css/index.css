@@ -348,6 +348,8 @@ body {
 #game-over {
   position: absolute;
   z-index: 5;
-  bottom: 150px;
-  left: 180px;
+  bottom: 90px;
+  left: 50px;
+    height: 470px;
+    width: 800px;
 }
