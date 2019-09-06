@@ -424,7 +424,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const mainLogo           = document.getElementById('meni-logo');
   const mainLogo2           = document.getElementById('meni-logo-2');
   const coinLogo           = document.getElementById('coin-logo');
-  const blockLogo           = document.getElementById('block-logo');
 
   const playGameButton     = document.getElementById('play-game');
   const gameOverImage      = document.getElementById('game-over');
@@ -477,7 +476,6 @@ document.addEventListener('DOMContentLoaded', () => {
     mainLogo.className          = 'hide';
     mainLogo2.className         = 'hide';
     coinLogo.className          = 'hide';
-    blockLogo.className         = 'hide';
     gameOverImage.className     = 'hide';
     grunt.className             = 'hide';
     soldier.className           = 'hide';
@@ -749,7 +747,7 @@ GameView.prototype.addLevelText = function(ctx) {
     if (this.game.blockInfo.options.block_weight < 0.3)
         this.ctx.fillStyle = '#f21';
     else if (this.game.blockInfo.options.block_weight < 0.8)
-        this.ctx.fillStyle = '#fe1';
+        this.ctx.fillStyle = '#ffce12';
     else
         this.ctx.fillStyle = '#2f1';
     ctx.fillRect(x, y + 10, 300 * this.game.blockInfo.options.block_weight, 100)
@@ -984,12 +982,12 @@ Game.prototype.addInvaderShips = function(level = 1) {
     } else if (row < 2) {
       invaderShipName = 'soldier';
       invaderShipImage = document.getElementById('soldier-1');
-      invaderShipSize = 45;
+      invaderShipSize = 25;
 
     } else if (row > 1) {
       invaderShipName = 'grunt';
       invaderShipImage = document.getElementById('grunt-1');
-      invaderShipSize = 25;
+      invaderShipSize = 35;
 
     }
 
