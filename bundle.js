@@ -697,7 +697,7 @@ GameView.prototype.addMenu = function(ctx) {
 GameView.prototype.addScoreText = function(ctx) {
   let x = this.game.DIM_X * .01, y = this.game.DIM_Y * .05;
   // ctx.find = "20px Georgia";
-  ctx.fillText(`SCORE: ${this.game.score}`, x, y);
+  ctx.fillText(`SCORE: ${this.game.score.toFixed(6)}`, x, y);
 };
 
 GameView.prototype.addLevelText = function(ctx) {
@@ -1336,17 +1336,14 @@ Ship.prototype.killScore = function() {
   // question: display max possible winnings?
 
   if (this.name === 'grunt') {
-    return 10;
+    return this.game.blockInfo.options.avg_transaction_sizes[2];
   } else if (this.name === 'soldier') {
-    return 20;
+    return this.game.blockInfo.options.avg_transaction_sizes[1];
   } else if (this.name === 'invader') {
-    return 40;
+    return this.game.blockInfo.options.avg_transaction_sizes[0];
   } else if (this.name === 'ufo') {
     this.game.ufoHit = true;
-    let ufoPoints = [50, 100, 200, 300, 500];
-    let idx = Math.random() * 4;
-    idx = Math.round(idx);
-    return ufoPoints[idx];
+    return this.game.blockInfo.options.block_reward;
   }
 };
 
@@ -1664,8 +1661,8 @@ BlockInfo.prototype.fetchData = function() {
                 l = [];
                 for (i = 1; i < r.length; i++) {
                     l.push(
-                        r[i].vin.map(x => x.prevout.value).reduce((x, y) => x + y, 0)
-                        - r[i].vout.map(x => x.value).reduce((x, y) => x + y, 0)
+                        (r[i].vin.map(x => x.prevout.value).reduce((x, y) => x + y, 0)
+                        - r[i].vout.map(x => x.value).reduce((x, y) => x + y, 0)) / 100000000
                     )
                 }
                 l.sort();
