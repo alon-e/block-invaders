@@ -1650,7 +1650,7 @@ const BlockInfo = function() {
     this.options = {
         height: 0,
         difficulty: 0,
-        hash: 0,
+        hash: "0000000000000000000000000000000000000000000000000000000000000000",
         total_fees: 0,
         block_reward: 12.5,
         avg_transaction_sizes: [0, 0, 0],
