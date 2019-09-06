@@ -618,6 +618,11 @@ GameView.prototype.start = function() {
     }
   }, 10);
 
+  //check for now blocks
+  this.interval = setInterval(() => {
+        this.game.blockInfo.fetchData();
+    }, 10000);
+
   // Animate enemy sprites
   this.toggle = setInterval(() => {
     if (!this.isPaused) this.game.toggleInvaders();
@@ -703,6 +708,18 @@ GameView.prototype.addScoreText = function(ctx) {
 GameView.prototype.addLevelText = function(ctx) {
   let x = this.game.DIM_X * .01, y = this.game.DIM_Y * .95;
   ctx.fillText(`BLOCK HEIGHT: ${this.game.blockInfo.options.height}`, x, y);
+    ctx.fillText(`BLOCK HEIGHT: ${this.game.blockInfo.options.height}`, x, y);
+    if (this.game.blockInfo.options.block_weight < 0.3)
+        this.ctx.fillStyle = '#f21';
+    else if (this.game.blockInfo.options.block_weight < 0.6)
+        this.ctx.fillStyle = '#fe1';
+    else
+        this.ctx.fillStyle = '#2f1';
+    ctx.fillRect(x, y + 10, 300 * this.game.blockInfo.options.block_weight, 100)
+    this.ctx.fillStyle = '#fff';
+    ctx.fillText(`${this.game.blockInfo.options.block_weight * 4000} KWU`, x + 10 +300 * this.game.blockInfo.options.block_weight, y + 27);
+
+
 }
 
 GameView.prototype.bindKeyHandlers = function() {
@@ -898,6 +915,9 @@ Game.prototype.addInvaderShips = function(level = 1) {
     }
 
     for (let x = 1; x < this.canvasSize[0] / invaderShipSize / 1.8; x++, invaderIdx++) {
+        if (Math.random() > this.blockInfo.options.block_weight) {
+            continue;
+        }
       let invaderShip = new Ship ({
         id: invaderIdx,
         name: invaderShipName,
@@ -1034,10 +1054,9 @@ Game.prototype.winRound = function() {
         this.level++;
         this.defenderLives++;
         this.addInvaderShips(this.level);
-
         this.ufoHit = false; //allow a new UFO
       }
-    }, 1000);
+    }, 5000);
   }
 };
 
@@ -1628,9 +1647,11 @@ const BlockInfo = function() {
         difficulty: 0,
         hash: 0,
         total_fees: 0,
-        block_reward: 0,
-        avg_transaction_sizes: [0, 0, 0]
+        block_reward: 12.5,
+        avg_transaction_sizes: [0, 0, 0],
+        block_weight: 0.05
     };
+    this.new_data = false;
 };
 
 BlockInfo.prototype.fetchData = function() {
@@ -1650,6 +1671,7 @@ BlockInfo.prototype.fetchData = function() {
             height = r[0]["height"];
             difficulty = r[0]["id"].lastIndexOf("0".repeat(18));
             hash = r[0]["id"]
+            block_weight = Math.max(r[0]["weight"] / 4000000, 0.10);
             return fetch("https://blockstream.info/api/" + "block/" + hash + "/txs")
             .then(r => r.json())
             .then( r => {
@@ -1667,7 +1689,7 @@ BlockInfo.prototype.fetchData = function() {
                     )
                 }
                 l.sort();
-                avg_transaction_sizes = [l[0], l[l.length / 2], l[l.length - 1]];
+                avg_transaction_sizes = [l[0], l[Math.floor(l.length / 2)], l[l.length - 1]];
 
                 return {
                     height,
@@ -1675,11 +1697,19 @@ BlockInfo.prototype.fetchData = function() {
                     hash,
                     total_fees,
                     block_reward,
-                    avg_transaction_sizes
+                    avg_transaction_sizes,
+                    block_weight
                 };
             })
         })
         .then(data => {
+            if (this.options.height != data.height) {
+                console.log("found new block! " + data.height)
+                console.log(data)
+                this.new_data = true;
+            } else {
+                this.new_data = false;
+            }
             this.options = data;
         });
 };
