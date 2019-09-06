@@ -766,10 +766,12 @@ module.exports = GameView;
 /***/ (function(module, exports, __webpack_require__) {
 
 const Ship = __webpack_require__(8);
+const BlockInfo = __webpack_require__(10);
+
 const Bullet = __webpack_require__(3);
-const Shield = __webpack_require__(10);
+const Shield = __webpack_require__(11);
 const ShieldPiece = __webpack_require__(2);
-const Star = __webpack_require__(11);
+const Star = __webpack_require__(12);
 const PowerUp = __webpack_require__(4);
 const Util = __webpack_require__(0);
 
@@ -783,6 +785,7 @@ const Game = function(options) {
   this.level = 1;
   this.invaderShips = [];
   this.ufo = null;
+  this.ufoHit = false;
   this.bullets = [];
   this.bulletId = 0;
   this.shields = [];
@@ -793,6 +796,7 @@ const Game = function(options) {
   this.DIM_X = this.canvasSize[0];
   this.DIM_Y = this.canvasSize[1];
 
+  this.getBlockInfo();
   this.addStars();
   this.addDefenderShip();
   this.addInvaderShips();
@@ -811,6 +815,11 @@ Game.prototype.randomPosition = function() {
   ];
 };
 
+Game.prototype.getBlockInfo = function() {
+    this.blockInfo = new BlockInfo();
+    this.blockInfo.fetchData();
+};
+
 Game.prototype.addStars = function() {
   for (let i = 0; i < Game.NUM_STARS; i++) {
     this.stars.push(new Star({
@@ -824,12 +833,13 @@ Game.prototype.addStars = function() {
 };
 
 Game.prototype.addUfo = function(ctx) {
-  //TODO: have UFO success only once! (block reward)
+  //have UFO success only once! (block reward)
+  if (this.ufoHit) return;
 
   // Early return if a ufo is currently spawned
   if (this.ufo) return;
 
-  let spawnUfoChance = Math.random() * 700;
+  let spawnUfoChance = Math.random() * 200;
   let spawnPosition = Math.round(Math.random() * 10);
   let vel, spawnIdx;
 
@@ -863,25 +873,24 @@ Game.prototype.addUfo = function(ctx) {
 
 Game.prototype.addInvaderShips = function(level = 1) {
   //TODO: locate invaders based on block
-  //TODO: diff radius based on size of drawing
   let invaderShipName, invaderShipImage, invaderShipSize;
   let y = 100;
   let invaderIdx = 0;
   let vel = [0.27, 0];
   vel[0] += 0.05 * level; //TODO: level == difficulty
 
-  for (let row = 0; row < 5; row++) {
+  for (let row = 0; row < 4; row++) {
     if (row < 1) {
       invaderShipName = 'invader';
       invaderShipImage = document.getElementById('invader-1');
       invaderShipSize = 55;
 
-    } else if (row < 3) {
+    } else if (row < 2) {
       invaderShipName = 'soldier';
       invaderShipImage = document.getElementById('soldier-1');
       invaderShipSize = 45;
 
-    } else if (row > 2) {
+    } else if (row > 1) {
       invaderShipName = 'grunt';
       invaderShipImage = document.getElementById('grunt-1');
       invaderShipSize = 25;
@@ -1333,6 +1342,7 @@ Ship.prototype.killScore = function() {
   } else if (this.name === 'invader') {
     return 40;
   } else if (this.name === 'ufo') {
+    this.game.ufoHit = true;
     let ufoPoints = [50, 100, 200, 300, 500];
     let idx = Math.random() * 4;
     idx = Math.round(idx);
@@ -1612,6 +1622,77 @@ module.exports = Note;
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
+const Util = __webpack_require__(0);
+
+const BlockInfo = function() {
+    this.options = {
+        height: 0,
+        difficulty: 0,
+        hash: 0,
+        total_fees: 0,
+        block_reward: 0,
+        avg_transaction_sizes: [0, 0, 0]
+    };
+};
+
+BlockInfo.prototype.fetchData = function() {
+    //get tip block
+    //fetch transactions
+    //total fees
+    //bin transactions for score
+    //output:
+    // - height
+    // - difficulty
+    // - total fees
+    // - (block reward - nice to have)
+    // - 3 avg transaction sizes
+    fetch("https://blockstream.info/api/" + "blocks/tip")
+        .then(r => r.json())
+        .then(r => {
+            height = r[0]["height"];
+            difficulty = r[0]["id"].lastIndexOf("0".repeat(18));
+            hash = r[0]["id"]
+            return fetch("https://blockstream.info/api/" + "block/" + hash + "/txs")
+            .then(r => r.json())
+            .then( r => {
+                if (!r[0].vin[0]["is_coinbase"]) {
+                    console.error("could not find coinbase! hash:" + hash);
+                    return
+                }
+                total_fees = r[0].vout[0].value / 100000000;
+                block_reward = 12.5; //NICE TO HAVE - check block height
+                l = [];
+                for (i = 1; i < r.length; i++) {
+                    l.push(
+                        r[i].vin.map(x => x.prevout.value).reduce((x, y) => x + y, 0)
+                        - r[i].vout.map(x => x.value).reduce((x, y) => x + y, 0)
+                    )
+                }
+                l.sort();
+                avg_transaction_sizes = [l[0], l[l.length / 2], l[l.length - 1]];
+
+                return {
+                    height,
+                    difficulty,
+                    hash,
+                    total_fees,
+                    block_reward,
+                    avg_transaction_sizes
+                };
+            })
+        })
+        .then(data => {
+            this.options = data;
+        });
+};
+
+module.exports = BlockInfo;
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
 const ShieldPiece = __webpack_require__(2);
 const Util = __webpack_require__(0);
 
@@ -1671,7 +1752,7 @@ module.exports = Shield;
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const Util = __webpack_require__(0);
