@@ -722,6 +722,8 @@ GameView.prototype.addLevelText = function(ctx) {
     ctx.fillRect(x, y + 10, 300 * this.game.blockInfo.options.block_weight, 100)
     this.ctx.fillStyle = '#fff';
     ctx.fillText(`${(this.game.blockInfo.options.block_weight * 4000).toFixed(3)} KWU`, x + 10 +300 * this.game.blockInfo.options.block_weight, y + 27);
+    ctx.fillText(`${this.game.blockInfo.options.transactions} Txs`, x + 210 + 300 * this.game.blockInfo.options.block_weight, y + 27);
+    ctx.fillText(`${timeDifference(Date.now(), this.game.blockInfo.options.timestamp * 1000)} `, x + 360 + 300 * this.game.blockInfo.options.block_weight, y + 27);
 
 
 }
@@ -778,6 +780,41 @@ GameView.prototype.moveDefender = function() {
     this.defender.fireBullet();
   }
 };
+
+function timeDifference(current, previous) {
+
+  var msPerMinute = 60 * 1000;
+  var msPerHour = msPerMinute * 60;
+  var msPerDay = msPerHour * 24;
+  var msPerMonth = msPerDay * 30;
+  var msPerYear = msPerDay * 365;
+
+  var elapsed = current - previous;
+
+  if (elapsed < msPerMinute) {
+    return Math.round(elapsed/1000) + ' seconds ago';
+  }
+
+  else if (elapsed < msPerHour) {
+    return Math.round(elapsed/msPerMinute) + ' minutes ago';
+  }
+
+  else if (elapsed < msPerDay ) {
+    return Math.round(elapsed/msPerHour ) + ' hours ago';
+  }
+
+  else if (elapsed < msPerMonth) {
+    return 'approximately ' + Math.round(elapsed/msPerDay) + ' days ago';
+  }
+
+  else if (elapsed < msPerYear) {
+    return 'approximately ' + Math.round(elapsed/msPerMonth) + ' months ago';
+  }
+
+  else {
+    return 'approximately ' + Math.round(elapsed/msPerYear ) + ' years ago';
+  }
+}
 
 module.exports = GameView;
 
@@ -1654,7 +1691,9 @@ const BlockInfo = function() {
         total_fees: 0,
         block_reward: 12.5,
         avg_transaction_sizes: [0, 0, 0],
-        block_weight: 0.05
+        block_weight: 0.05,
+        transactions: 0,
+        timestamp: Date.now()
     };
     this.new_data = false;
 };
@@ -1675,8 +1714,10 @@ BlockInfo.prototype.fetchData = function() {
         .then(r => {
             height = r[0]["height"];
             difficulty = r[0]["id"].lastIndexOf("0".repeat(18));
-            hash = r[0]["id"]
+            hash = r[0]["id"];
             block_weight = Math.max(r[0]["weight"] / 4000000, 0.10);
+            transactions = r[0]["tx_count"];
+            timestamp = r[0]["timestamp"];
             return fetch("https://blockstream.info/api/" + "block/" + hash + "/txs")
             .then(r => r.json())
             .then( r => {
@@ -1703,7 +1744,9 @@ BlockInfo.prototype.fetchData = function() {
                     total_fees,
                     block_reward,
                     avg_transaction_sizes,
-                    block_weight
+                    block_weight,
+                    transactions,
+                    timestamp
                 };
             })
         })
