@@ -354,10 +354,10 @@ body {
 }
 
 #game-over {
-  position: absolute;
-  z-index: 5;
-  bottom: 90px;
-  left: 50px;
-    height: 470px;
-    width: 800px;
+    position: absolute;
+    z-index: 5;
+    bottom: 120px;
+    left: 100px;
+    height: 415px;
+    width: 700px;
 }
