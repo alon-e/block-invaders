@@ -708,7 +708,6 @@ GameView.prototype.addScoreText = function(ctx) {
 GameView.prototype.addLevelText = function(ctx) {
   let x = this.game.DIM_X * .01, y = this.game.DIM_Y * .95;
   ctx.fillText(`BLOCK HEIGHT: ${this.game.blockInfo.options.height}`, x, y);
-    ctx.fillText(`BLOCK HEIGHT: ${this.game.blockInfo.options.height}`, x, y);
     if (this.game.blockInfo.options.block_weight < 0.3)
         this.ctx.fillStyle = '#f21';
     else if (this.game.blockInfo.options.block_weight < 0.6)
@@ -717,7 +716,7 @@ GameView.prototype.addLevelText = function(ctx) {
         this.ctx.fillStyle = '#2f1';
     ctx.fillRect(x, y + 10, 300 * this.game.blockInfo.options.block_weight, 100)
     this.ctx.fillStyle = '#fff';
-    ctx.fillText(`${this.game.blockInfo.options.block_weight * 4000} KWU`, x + 10 +300 * this.game.blockInfo.options.block_weight, y + 27);
+    ctx.fillText(`${(this.game.blockInfo.options.block_weight * 4000).toFixed(3)} KWU`, x + 10 +300 * this.game.blockInfo.options.block_weight, y + 27);
 
 
 }
@@ -819,6 +818,10 @@ const Game = function(options) {
   this.addInvaderShips();
   this.addShields();
 
+  this.invaderShips = [];
+  this.winRound();
+
+
   this.gameView.addKeyListeners();
 };
 
@@ -889,7 +892,6 @@ Game.prototype.addUfo = function(ctx) {
 };
 
 Game.prototype.addInvaderShips = function(level = 1) {
-  //TODO: locate invaders based on block
   let invaderShipName, invaderShipImage, invaderShipSize;
   let y = 100;
   let invaderIdx = 0;
@@ -949,7 +951,7 @@ Game.prototype.addShields = function() {
       id: i,
       pos: [shieldPosX, shieldPosY],
       radius: 7,
-      color: "#a0a09b",
+      color: "#61615c",
       game: this
     });
 
@@ -1056,7 +1058,7 @@ Game.prototype.winRound = function() {
         this.addInvaderShips(this.level);
         this.ufoHit = false; //allow a new UFO
       }
-    }, 5000);
+    }, 3000);
   }
 };
 
@@ -1078,8 +1080,6 @@ Game.prototype.collisionObjects = function() {
 
 // This method makes enemy ships shoot bullets
 Game.prototype.enemyFire = function() {
-  //TODO: change to get input from block (difficulty, ?)
-
   // fireChance increases as the horde gets wiped out
   let fireChance, invaderCount = this.invaderShips.length;
   if (invaderCount < 10) {
