@@ -52,16 +52,16 @@ body {
 
 #splash-instruction {
   position: absolute;
-  bottom: 170px;
-  left: 215px;
+  bottom: 190px;
+  left: 200px;
   width: 500px;
-  height: 40px;
-
+  height: 10px;
+    line-height: 0.5;
   text-align: center;
   font-family: 'Bungee Inline', cursive;
-  font-size: 23px;
+  font-size: 20px;
   color: #fff;
-  letter-spacing: 2px;
+  letter-spacing: 0px;
 }
 
 #audio {
@@ -240,12 +240,20 @@ body {
 #coin-logo {
   position: absolute;
   top: 10px;
-  left: 350px;
+  left: 375px;
 
-  height: 200px;
-  width: 200px;
+  height: 150px;
+  width: 150px;
 }
 
+#block-logo {
+    position: absolute;
+    top: 200px;
+    left: 350px;
+
+    height: 200px;
+    width: 200px;
+}
 #meni-logo {
   position: absolute;
   top: 100px;
@@ -264,46 +272,46 @@ body {
   width: 330px;
 }
 
-#grunt-1 {
-  position: absolute;
-  left: 355px;
-  bottom: 350px;
+/*#grunt-1 {*/
+/*  position: absolute;*/
+/*  left: 355px;*/
+/*  bottom: 350px;*/
 
-  height: 30px;
-  width: 30px;
-}
+/*  height: 30px;*/
+/*  width: 30px;*/
+/*}*/
 
-#soldier-1 {
-  position: absolute;
-  left: 355px;
-  bottom: 310px;
+/*#soldier-1 {*/
+/*  position: absolute;*/
+/*  left: 355px;*/
+/*  bottom: 310px;*/
 
-  height: 30px;
-  width: 30px;
-}
+/*  height: 30px;*/
+/*  width: 30px;*/
+/*}*/
 
-#invader-1 {
-  position: absolute;
-  left: 355px;
-  bottom: 270px;
+/*#invader-1 {*/
+/*  position: absolute;*/
+/*  left: 355px;*/
+/*  bottom: 270px;*/
 
-  height: 30px;
-  width: 30px;
-}
+/*  height: 30px;*/
+/*  width: 30px;*/
+/*}*/
 
-#ufo {
-  position: absolute;
-  left: 355px;
-  bottom: 226px;
+/*#ufo {*/
+/*  position: absolute;*/
+/*  left: 355px;*/
+/*  bottom: 226px;*/
 
-  height: 30px;
-  width: 30px;
-}
+/*  height: 30px;*/
+/*  width: 30px;*/
+/*}*/
 
 #play-game {
   position: absolute;
-  bottom: 30px;
-  left: 307px;
+  bottom: 40px;
+  left: 300px;
 
   z-index: 5;
   height: 50px;

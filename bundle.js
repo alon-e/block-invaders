@@ -420,10 +420,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const gameView   = new GameView(ctx, canvasSize);
 
   gameView.welcome();
-
+  gameView.pre();
   const mainLogo           = document.getElementById('meni-logo');
   const mainLogo2           = document.getElementById('meni-logo-2');
   const coinLogo           = document.getElementById('coin-logo');
+  const blockLogo           = document.getElementById('block-logo');
 
   const playGameButton     = document.getElementById('play-game');
   const gameOverImage      = document.getElementById('game-over');
@@ -476,6 +477,7 @@ document.addEventListener('DOMContentLoaded', () => {
     mainLogo.className          = 'hide';
     mainLogo2.className         = 'hide';
     coinLogo.className          = 'hide';
+    blockLogo.className         = 'hide';
     gameOverImage.className     = 'hide';
     grunt.className             = 'hide';
     soldier.className           = 'hide';
@@ -596,7 +598,7 @@ const GameView = function(ctx, canvasSize) {
   this.spacePressed = false;
 
   this.isMuted = false;
-
+  this.isPre = true;
   this.addKeyListeners();
 };
 
@@ -604,6 +606,18 @@ GameView.prototype.toggleAudio = function() {
   this.isMuted = this.isMuted ? false : true;
 };
 
+GameView.prototype.pre = function() {
+
+  this.interval = setInterval(() => {
+
+    if (this.isPre && this.game.blockInfo.new_data) {
+      this.addLivesText(this.ctx);
+      this.addScoreText(this.ctx);
+      this.addLevelText(this.ctx);
+      this.isPre = false;
+    }
+  }, 100);
+}
 GameView.prototype.start = function() {
   this.interval = setInterval(() => {
     if (!this.isPaused) {
@@ -723,7 +737,9 @@ GameView.prototype.addLevelText = function(ctx) {
     this.ctx.fillStyle = '#fff';
     ctx.fillText(`${(this.game.blockInfo.options.block_weight * 4000).toFixed(3)} KWU`, x + 10 +300 * this.game.blockInfo.options.block_weight, y + 27);
     ctx.fillText(`${this.game.blockInfo.options.transactions} Txs`, x + 210 + 300 * this.game.blockInfo.options.block_weight, y + 27);
-    ctx.fillText(`${timeDifference(Date.now(), this.game.blockInfo.options.timestamp * 1000)} `, x + 360 + 300 * this.game.blockInfo.options.block_weight, y + 27);
+  ctx.textAlign = "end";
+  ctx.fillText(`${timeDifference(Date.now(), this.game.blockInfo.options.timestamp * 1000)} `, 900 - 10, y + 27);
+  ctx.textAlign = "start";
 
 
 }
@@ -901,7 +917,7 @@ Game.prototype.addUfo = function(ctx) {
   // Early return if a ufo is currently spawned
   if (this.ufo) return;
 
-  let spawnUfoChance = Math.random() * 200;
+  let spawnUfoChance = Math.random() * 300;
   let spawnPosition = Math.round(Math.random() * 10);
   let vel, spawnIdx;
 
