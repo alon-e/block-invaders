@@ -601,6 +601,8 @@ const GameView = function(ctx, canvasSize) {
   this.killScoreList = []
 
   this.addKeyListeners();
+  this.addJoyStick();
+
 };
 
 GameView.prototype.toggleAudio = function() {
@@ -776,6 +778,48 @@ GameView.prototype.addKeyListeners = function() {
   document.addEventListener('keydown', this.handleKeyDown.bind(this), false);
   document.addEventListener('keyup', this.handleKeyUp.bind(this), false);
 };
+
+GameView.prototype.addJoyStick = function() {
+  window.addEventListener('gamepadconnected', this.handleJoyStick.bind(this));
+};
+
+GameView.prototype.handleJoyStick = function(e) {
+  console.log();
+
+  this.interval = setInterval(() => {
+    if (!this.isPaused) {
+      if (navigator.getGamepads()[0].axes[0] === -1) {
+        this.leftPressed = true;
+      } else if (navigator.getGamepads()[0].axes[0] === 1) {
+        this.rightPressed = true;
+      }
+      if (navigator.getGamepads()[0].buttons[3]["pressed"]) {
+        this.spacePressed = true;
+      }
+
+      if (navigator.getGamepads()[0].axes[0] === 0) {
+        this.leftPressed = false;
+        this.rightPressed = false;
+      }
+      if (!navigator.getGamepads()[0].buttons[3]["pressed"]) {
+        this.spacePressed = false;
+      }
+    }
+  }, 10);
+  // g = navigator.getGamepads()[0].buttons[3]
+  // GamepadButton {pressed: true, touched: true, value: 1}
+  // g = navigator.getGamepads()[0].axes[0] right: 1, left: -1
+
+  // if (navigator.getGamepads()[0].axes[0] === -1) {
+  //   this.leftPressed = true;
+  // } else if (navigator.getGamepads()[0].axes[0] === 1) {
+  //   this.rightPressed = true;
+  // }
+  // if (navigator.getGamepads()[0].buttons[3]["pressed"]) {
+  //   this.spacePressed = true;
+  // }
+};
+
 
 GameView.prototype.handleKeyDown = function(e) {
   if (e.keyCode === 37) {
