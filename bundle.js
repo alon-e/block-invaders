@@ -1770,7 +1770,7 @@ const BlockInfo = function() {
         difficulty: 0,
         hash: "0000000000000000000000000000000000000000000000000000000000000000",
         total_fees: 0,
-        block_reward: 12.5,
+        block_reward: 6.25,
         avg_transaction_sizes: [0, 0, 0],
         block_weight: 0.05,
         transactions: 0,
@@ -1807,7 +1807,7 @@ BlockInfo.prototype.fetchData = function() {
                     return
                 }
                 total_fees = r[0].vout[0].value / 100000000;
-                block_reward = 12.5; //NICE TO HAVE - check block height
+                block_reward = 6.25; //NICE TO HAVE - check block height
                 l = [];
                 for (i = 1; i < r.length; i++) {
                     l.push(
